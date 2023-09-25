@@ -1,4 +1,4 @@
-package model_class;
+package models;
 
 public class Student {
     private String fullName;

@@ -1,6 +1,6 @@
-package model_class;
+package models;
 
-import enum_package.StudyProfile;
+import enums.StudyProfile;
 
 public class University {
     private String id;
