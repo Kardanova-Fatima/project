@@ -1,4 +1,4 @@
-package Xlsx.reader;
+package xlsx;
 
 import enums.StudyProfile;
 import models.Student;

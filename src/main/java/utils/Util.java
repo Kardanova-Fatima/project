@@ -1,12 +1,11 @@
-package Utils;
+package utils;
 
 import comparator.*;
 import enums.EStudentComparator;
 import enums.EUniversityComparator;
-import models.University;
 
-public class Utils {
-     private Utils() {
+public class Util {
+     private Util() {
     }
     public static StudentComparator getStudentComparator(EStudentComparator studentComparator) {
         switch (studentComparator) {
