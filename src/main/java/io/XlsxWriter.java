@@ -1,4 +1,4 @@
-package xlsx;
+package io;
 
 import models.Statistics;
 import org.apache.poi.ss.usermodel.Cell;
@@ -11,12 +11,18 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class XlsxWriter {
-    private XlsxWriter(){
+
+    private static final Logger logger = Logger.getLogger(XlsxWriter.class.getName());
+
+    private XlsxWriter() {
     }
-    public static void writeXlsxStatistics(List<Statistics> statisticsList, String filePath) throws IOException{
+
+    public static void writeXlsxStatistics(List<Statistics> statisticsList, String filePath) {
+        logger.log(Level.INFO, "Excel writing started");
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet statisticsSheet = workbook.createSheet("Статистика");
         Font hederFont = workbook.createFont();
@@ -54,9 +60,14 @@ public class XlsxWriter {
             Cell universitiesCell = dataRow.createCell(4);
             universitiesCell.setCellValue(statistics.getUniversityNames());
         }
-        try (FileOutputStream outputStream = new FileOutputStream(filePath)){
+        try {
+            FileOutputStream outputStream = new FileOutputStream(filePath);
             workbook.write(outputStream);
-
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "New excel file writing failed", e);
+            return;
         }
+
+        logger.log(Level.INFO, "Excel writing finished successfully");
     }
 }

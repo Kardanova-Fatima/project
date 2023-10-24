@@ -1,46 +1,49 @@
+import io.JsonWriter;
+import io.XmlWriter;
+import models.FullInfo;
 import models.Statistics;
-import utils.JsonUtil;
 import utils.StatisticsUtil;
 import utils.Util;
-import xlsx.XlsxReader;
+import io.XlsxReader;
 import enums.EStudentComparator;
 import enums.EUniversityComparator;
 import models.Student;
 import models.University;
 import comparator.*;
-import xlsx.XlsxWriter;
+import io.XlsxWriter;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import static java.util.logging.Level.INFO;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+
+    public static void main(String[] args) {
+        try {
+            LogManager.getLogManager().readConfiguration(Main.class.getResourceAsStream("/logging.properties"));
+        } catch (IOException e) {
+            System.err.println("Could not setup logger configuration: " + e.toString());
+        }
+        logger.log(INFO, "Application started, Logger configured");
         List<University> universities = XlsxReader.readXlsxUniversities("src/main/resources/universityInfo.xlsx");
         UniversityComparator universityComparator = Util.getUniversityComparator(EUniversityComparator.YEAR_OF_FOUNDATION);
         universities.sort(universityComparator);
-        String universitiesJson = JsonUtil.universityListToJson(universities);
-        System.out.println(universitiesJson);
-        List<University> universitiesFromJson = JsonUtil.jsonUniversityList(universitiesJson);
-        System.out.println(universities.size() == universitiesFromJson.size());
-        universities.forEach(university -> {String universityJson = JsonUtil.universityToJson(university);
-            System.out.println(universityJson);
-        University universityFromJson = JsonUtil.jsonUniversity(universityJson);
-            System.out.println(universityFromJson);
-        });
 
         List<Student> students = XlsxReader.readXlsxStudents("src/main/resources/universityInfo.xlsx");
         StudentComparator studentComparator = Util.getStudentComparator(EStudentComparator.AVG_EXAM_SCORE);
         students.sort(studentComparator);
-        String studentsJson = JsonUtil.studentListJson(students);
-        System.out.println(studentsJson);
-        List<Student> studentsFromJson = JsonUtil.jsonStudentList(studentsJson);
-        System.out.println(students.size() == studentsFromJson.size());
-        students.forEach(student -> {String studentJson = JsonUtil.studentToJson(student);
-            System.out.println(studentJson);
-        Student studentFromJson = JsonUtil.jsonStudent(studentJson);
-            System.out.println(studentFromJson);
-        });
+
         List<Statistics> statisticsList = StatisticsUtil.createStatistics(students, universities);
         XlsxWriter.writeXlsxStatistics(statisticsList, "statistics.xlsx");
+        FullInfo fullInfo = new FullInfo().setStudentList(students).setUniversityList(universities)
+                .setStatisticsList(statisticsList).setProcessDate(new Date());
+        XmlWriter.generateXmlReq(fullInfo);
+        JsonWriter.writeJsonReq(fullInfo);
+        logger.log(INFO, "Application finished");
     }
 }

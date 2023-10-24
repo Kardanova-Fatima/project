@@ -5,8 +5,9 @@ import enums.EStudentComparator;
 import enums.EUniversityComparator;
 
 public class Util {
-     private Util() {
+    private Util() {
     }
+
     public static StudentComparator getStudentComparator(EStudentComparator studentComparator) {
         switch (studentComparator) {
             case FULL_NAME:
@@ -17,12 +18,13 @@ public class Util {
                 return new StudentCurrentCourseNumberComparator();
             case AVG_EXAM_SCORE:
                 return new StudentAvgExamScoreComparator();
-            default: return new StudentFullNameComparator();
+            default:
+                return new StudentFullNameComparator();
         }
     }
 
-        public static UniversityComparator getUniversityComparator(EUniversityComparator universityComparator){
-        switch (universityComparator){
+    public static UniversityComparator getUniversityComparator(EUniversityComparator universityComparator) {
+        switch (universityComparator) {
             case ID:
                 return new UniversityIdComparator();
             case FULL_NAME:
